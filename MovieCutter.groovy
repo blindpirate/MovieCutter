@@ -75,7 +75,7 @@ groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00-en
             return
         }
 
-        if (!options.r && !options.k) {
+        if (options.r && options.k) {
             System.err.println("-k/--keep and -r/--remove are not allowed to exist at the same time!")
             cli.usage()
             return
