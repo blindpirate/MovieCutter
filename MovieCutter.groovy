@@ -105,6 +105,7 @@ groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00 -s
 
     static List<File> cut(OptionAccessor options) {
         File inputFile = getInputFile(options)
+        assert inputFile.isFile(): "${options.i} is not a file!"
         List<Interval> intervals = keepModeIntervals(options, inputFile)
         return intervals.withIndex().collect { Interval interval, int index ->
             File tmp = addExtensionPrefix(inputFile, index.toString())
