@@ -25,7 +25,7 @@ groovy MovieCutter.groovy --input input.mp4 --output output.mp4 -k start-01:00,0
 
 Remove mode, remove the specified interval:
 
-groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00-end -s
+groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00 -s
 
 ---------------------------------------------------------------------------------------------------
 -i/--input:                         输入文件
@@ -44,7 +44,7 @@ groovy MovieCutter.groovy --input input.mp4 --output output.mp4 -k start-01:00,0
 
 删除模式，删除指定的时间区间
 
-groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00-end -s
+groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00 -s
 ---------------------------------------------------------------------------------------------------
 ''')
 
