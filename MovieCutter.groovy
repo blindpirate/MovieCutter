@@ -1,6 +1,7 @@
 import groovy.cli.commons.CliBuilder
 import groovy.cli.commons.OptionAccessor
 import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 import java.nio.file.Paths
 
@@ -100,6 +101,7 @@ groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00 -s
             File tmpFile = File.createTempFile('movieMerge', '.txt')
             tmpFile.text = tmpFiles.collect { "file '${it.absoluteFile}'" }.join('\n')
             run(options, 'ffmpeg', '-f', 'concat', '-safe', '0', '-i', tmpFile.absolutePath, '-c', 'copy', outputFile.absolutePath)
+            tmpFiles.each { assert it.delete() }
         }
     }
 
@@ -132,7 +134,10 @@ groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00 -s
         // 01-02,03-04 -> start-01,02-03,04-end
         assert !removeModeIntervals.empty
 
-        List<Interval> ret = [new Interval(start: Instant.parse('start', inputFile), end: removeModeIntervals[0].start)]
+        // 0:0-0:1,0:2-0:3 -> 0:1-0:2,0:3-end
+        List<Interval> ret = removeModeIntervals[0].start == Instant.ZERO ?
+                [] :
+                [new Interval(start: Instant.parse('start', inputFile), end: removeModeIntervals[0].start)]
         for (int i = 0; i < removeModeIntervals.size() - 1; ++i) {
             ret.add(new Interval(start: removeModeIntervals[i].end, end: removeModeIntervals[i + 1].start))
         }
@@ -162,6 +167,8 @@ groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00 -s
         return intervals.split(',').collect { Interval.parse(it, inputFile) }
     }
 
+    @ToString
+    @EqualsAndHashCode
     static class Interval {
         Instant start
         Instant end
@@ -180,8 +187,10 @@ groovy MovieCutter.groovy -i input.mp4 -r 00:01:00-00:02:00,00:03:00-00:04:00 -s
         }
     }
 
+    @ToString
     @EqualsAndHashCode
     static class Instant {
+        static final Instant ZERO = Instant.fromHourMinuteSecond('0:0:0')
         int hour = 0
         int minute = 0
         int second = 0
